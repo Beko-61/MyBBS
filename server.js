@@ -1,74 +1,67 @@
-// koharu-bbs: シンプルな2ch風匿名BBS
-
 // server.js
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-app.use(express.json());
 app.use(express.static('public'));
+app.use(express.json());
 
-const DATA_FILE = './data/threads.json';
+const threadsFile = './data/threads.json';
 
-// データファイルがなければ初期化
-if (!fs.existsSync(DATA_FILE)) {
-  fs.mkdirSync('./data', { recursive: true });
-  fs.writeFileSync(DATA_FILE, JSON.stringify([]));
+function readThreads() {
+  if (!fs.existsSync(threadsFile)) return [];
+  const raw = fs.readFileSync(threadsFile);
+  return JSON.parse(raw);
 }
 
-// スレッド一覧取得
+function writeThreads(threads) {
+  fs.writeFileSync(threadsFile, JSON.stringify(threads, null, 2));
+}
+
 app.get('/api/threads', (req, res) => {
-  const data = JSON.parse(fs.readFileSync(DATA_FILE));
-  res.json(data);
+  const threads = readThreads();
+  res.json(threads.map(t => ({ id: t.id, title: t.title })));
 });
 
-// スレッド新規作成
 app.post('/api/threads', (req, res) => {
-  const threads = JSON.parse(fs.readFileSync(DATA_FILE));
   const { title, name, content } = req.body;
-  const threadId = threads.length + 1;
-  const timestamp = new Date().toISOString();
-  threads.push({
-    id: threadId,
+  const threads = readThreads();
+  const id = Date.now().toString();
+  const newThread = {
+    id,
     title,
-    posts: [{
-      id: 1,
-      name: name || '名無しさん',
-      content,
-      timestamp,
-    }],
-  });
-  fs.writeFileSync(DATA_FILE, JSON.stringify(threads, null, 2));
-  res.json({ success: true });
+    posts: [
+      { name: name || '名無しさん', content: content }
+    ]
+  };
+  threads.push(newThread);
+  writeThreads(threads);
+  res.status(201).json({ id });
 });
 
-// 投稿追加
-app.post('/api/threads/:id/posts', (req, res) => {
-  const threads = JSON.parse(fs.readFileSync(DATA_FILE));
-  const { id } = req.params;
+app.get('/api/thread/:id', (req, res) => {
+  const threads = readThreads();
+  const thread = threads.find(t => t.id === req.params.id);
+  if (!thread) return res.status(404).json({ error: 'Not found' });
+  res.json(thread);
+});
+
+app.post('/api/thread/:id/reply', (req, res) => {
   const { name, content } = req.body;
-  const thread = threads.find(t => t.id === Number(id));
+  const threads = readThreads();
+  const thread = threads.find(t => t.id === req.params.id);
   if (!thread) return res.status(404).json({ error: 'Thread not found' });
-  const timestamp = new Date().toISOString();
-  thread.posts.push({
-    id: thread.posts.length + 1,
-    name: name || '名無しさん',
-    content,
-    timestamp,
-  });
-  fs.writeFileSync(DATA_FILE, JSON.stringify(threads, null, 2));
-  res.json({ success: true });
+  thread.posts.push({ name: name || '名無しさん', content });
+  writeThreads(threads);
+  res.status(201).json({ success: true });
+});
+
+app.get('/thread', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'thread.html'));
 });
 
 app.listen(PORT, () => {
-  console.log(`BBS running at http://localhost:${PORT}`);
+  console.log(`サーバーが http://localhost:${PORT} で起動中…`);
 });
-
-/*
-public/
-  index.html
-  style.css
-  main.js
-*/
