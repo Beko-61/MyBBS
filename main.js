@@ -2,6 +2,20 @@
 document.addEventListener('DOMContentLoaded', () => {
   const threadForm = document.getElementById('thread-form');
   const threadList = document.getElementById('thread-list');
+  const adminBtn = document.getElementById('admin-btn');
+  // 管理者モードボタンの動作
+  if (adminBtn) {
+    adminBtn.addEventListener('click', () => {
+      const input = prompt('管理者パスワードを入力してください');
+      if (input === 'admin.06010717') {
+        alert('管理者モードに入りました');
+        // 管理者モード用の処理
+      } else {
+        alert('パスワードが違います');
+      }
+    });
+  }
+  
 
   // スレッド一覧を取得して表示
   async function loadThreads() {
