@@ -1,0 +1,21 @@
+
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  background: #f4f4f4;
+  color: #333;
+}
+#app {
+  padding: 1rem;
+}
+.message {
+  background: #fff;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.admin-tag {
+  color: red;
+  font-weight: bold;
+}
