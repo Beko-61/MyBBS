@@ -1,13 +1,32 @@
+// public/index.html
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>こはるBBS</title>
-  <link rel="stylesheet" href="../style.css" />
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div id="app"></div>
-  <script src="../src/main.js" type="module"></script>
+  <header>
+    <h1>こはるBBS</h1>
+  </header>
+
+  <section id="create-thread">
+    <h2>新規スレッド作成</h2>
+    <form id="thread-form">
+      <input type="text" id="thread-title" placeholder="スレッドタイトル" required><br>
+      <input type="text" id="thread-name" placeholder="名前 (省略可)"><br>
+      <textarea id="thread-content" placeholder="本文" required></textarea><br>
+      <button type="submit">作成</button>
+    </form>
+  </section>
+
+  <section id="threads">
+    <h2>スレッド一覧</h2>
+    <ul id="thread-list"></ul>
+  </section>
+
+  <script src="main.js"></script>
 </body>
 </html>
