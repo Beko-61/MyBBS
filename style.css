@@ -1,21 +1,66 @@
-
+/* public/style.css */
 body {
   font-family: 'Arial', sans-serif;
+  background: #1e1e1e;
+  color: #e0e0e0;
   margin: 0;
-  background: #f4f4f4;
-  color: #333;
+  padding: 1em;
 }
-#app {
-  padding: 1rem;
+
+a {
+  color: #5ab9f5;
+  text-decoration: none;
 }
-.message {
-  background: #fff;
-  padding: 1rem;
+
+a:hover {
+  text-decoration: underline;
+}
+
+h1, h2 {
+  color: #ffffff;
+}
+
+form {
+  background: #2a2a2a;
+  padding: 1em;
+  margin-bottom: 1em;
   border-radius: 8px;
-  margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
-.admin-tag {
-  color: red;
-  font-weight: bold;
+
+input, textarea {
+  width: 100%;
+  padding: 0.5em;
+  margin-top: 0.5em;
+  margin-bottom: 1em;
+  border: none;
+  border-radius: 4px;
+  background: #3a3a3a;
+  color: #fff;
+}
+
+button {
+  background: #5ab9f5;
+  color: #000;
+  border: none;
+  padding: 0.5em 1em;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #77ccff;
+}
+
+ul {
+  list-style: none;
+  padding-left: 0;
+}
+
+li {
+  padding: 1em;
+  border-bottom: 1px solid #444;
+  background: #252525;
+  margin-bottom: 0.5em;
+  border-radius: 6px;
 }
