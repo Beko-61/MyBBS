@@ -1,0 +1,59 @@
+<!-- public/thread.html -->
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>スレッド表示</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <h1>スレッド</h1>
+  <div id="thread-title"></div>
+  <ul id="post-list"></ul>
+
+  <form id="reply-form">
+    <input type="text" id="reply-name" placeholder="名前(任意)" />
+    <textarea id="reply-content" placeholder="コメント" required></textarea>
+    <button type="submit">書き込む</button>
+  </form>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const threadId = urlParams.get('id');
+    const threadTitle = document.getElementById('thread-title');
+    const postList = document.getElementById('post-list');
+    const replyForm = document.getElementById('reply-form');
+
+    async function loadThread() {
+      const res = await fetch(`/api/thread/${threadId}`);
+      const thread = await res.json();
+      threadTitle.innerHTML = `<h2>${thread.title}</h2>`;
+      postList.innerHTML = '';
+      thread.posts.forEach(post => {
+        const li = document.createElement('li');
+        const name = post.name === '管理者' ? `<span style='color:#f66;'>[管理者]</span>` : post.name;
+        li.innerHTML = `<strong>${name || '名無しさん'}</strong>: ${post.content}`;
+        postList.appendChild(li);
+      });
+    }
+
+    replyForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('reply-name').value;
+      const content = document.getElementById('reply-content').value;
+      const res = await fetch(`/api/thread/${threadId}/reply`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, content })
+      });
+      if (res.ok) {
+        replyForm.reset();
+        loadThread();
+      }
+    });
+
+    loadThread();
+  </script>
+</body>
+</html>
